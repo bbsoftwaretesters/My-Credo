@@ -1,5 +1,6 @@
 package com.myCredo.testsUtils;
 
+import io.qameta.allure.Step;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.testng.annotations.DataProvider;
 import org.testng.asserts.SoftAssert;
@@ -54,6 +55,8 @@ public class AuthenticationTestUtils extends TestUtils {
             it.enterPassword(password);
         });
     }
+
+    @Step("checkWarningMessage")
 
     public static void checkWarningMessage(LoginPage l, String dialect, SoftAssert softAssert) {
         String warningMessage = l.getWarningMessage();
