@@ -55,9 +55,6 @@ public class AuthenticationTestUtils extends TestUtils {
             it.enterPassword(password);
         });
     }
-
-    @Step("checkWarningMessage")
-
     public static void checkWarningMessage(LoginPage l, String dialect, SoftAssert softAssert) {
         String warningMessage = l.getWarningMessage();
         try {
