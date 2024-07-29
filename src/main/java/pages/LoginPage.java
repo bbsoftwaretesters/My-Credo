@@ -1,8 +1,10 @@
 package pages;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 
 public class LoginPage extends BasePage<LoginPage> {
@@ -27,6 +29,13 @@ public class LoginPage extends BasePage<LoginPage> {
     public void enterUsername(@NonNull String username) {
         waitFor(usernameField, 5);
         usernameField.sendKeys(username);
+    }
+
+    public void clearUserName() {
+        waitFor(usernameField, 5);
+        Actions actions = new Actions(driver);
+        actions.moveToElement(usernameField).click().keyDown(Keys.CONTROL).sendKeys(Keys.BACK_SPACE).keyUp(Keys.CONTROL).perform();
+
     }
 
     public String getUsername() {
@@ -60,6 +69,10 @@ public class LoginPage extends BasePage<LoginPage> {
     public HomePage clickLogin() {
         loginButton.click();
         return new HomePage(driver);
+    }
+
+    public boolean isSubmitDisabled() {
+        return loginButton.isEnabled();
     }
 
     public <T extends BasePage<T>> T clickLogin(Class<T> klass) {

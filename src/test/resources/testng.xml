@@ -2,7 +2,7 @@
 <suite name="Suite" parallel="methods" thread-count="5">
     <test name="Test">
         <classes>
-            <class name="com.myCredo.tests.LoginTests"/>
+            <class name="com.myCredo.tests.AuthenticationTest"/>
         </classes>
     </test>
 </suite>

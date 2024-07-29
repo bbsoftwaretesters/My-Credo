@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-public class LoginTestUtils extends TestUtils {
+public class AuthenticationTestUtils extends TestUtils {
 
     final List<String> dialects = Arrays.asList("ka", "meg", "svan");
 
@@ -31,6 +31,22 @@ public class LoginTestUtils extends TestUtils {
 
         return data;
     }
+
+    @DataProvider(name = "submitData")
+    public Object[][] createSubmitData() {
+        int count = dialects.size();
+        Object[][] data = new Object[count][2]; // Array to hold the test data
+
+        for (int i = 0; i < count; i++) {
+            int randomInt = new Random().nextInt((10 - 1) + 1) + 1;
+            String randomStr = RandomStringUtils.random(randomInt, StringUtils.enChars);
+            data[i][0] = randomStr;
+            data[i][1] = dialects.get(i);
+        }
+
+        return data;
+    }
+
 
     public void fillAuthFields(LoginPage page, String username, String password) {
         page.job(it -> {

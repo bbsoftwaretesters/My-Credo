@@ -1,23 +1,28 @@
 package com.myCredo.tests;
 
-import com.myCredo.testsUtils.LoginTestUtils;
+import com.myCredo.testsUtils.AuthenticationTestUtils;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.testng.asserts.SoftAssert;
 import pages.LoginPage;
-import services.Bundle;
 
 import java.io.FileNotFoundException;
 
-public class LoginTests extends LoginTestUtils {
+public class AuthenticationTest extends AuthenticationTestUtils {
 
     @BeforeClass
     public void setUp() {
         WebDriverManager.chromedriver().setup();
         driver = new ChromeDriver();
+    }
+
+    @BeforeMethod
+    public void loadAuthPage() {
+        driver.get("https://mycredo.ge/landing/main/auth");
     }
 
     @AfterClass
@@ -31,9 +36,6 @@ public class LoginTests extends LoginTestUtils {
     public void loginNegativeTest(String username, String password, String dialect) throws FileNotFoundException {
         SoftAssert softAssert = new SoftAssert();
 
-        // Initialize WebDriver inside the test method
-        driver.get("https://mycredo.ge/landing/main/auth");
-
         new LoginPage(driver)
                 .clickLanguageButton()
                 .clickDialect(dialect)
@@ -44,12 +46,19 @@ public class LoginTests extends LoginTestUtils {
         softAssert.assertAll();
     }
 
-    @Test
-    public void test1() throws FileNotFoundException {
-        String str = new Bundle("meg").getString("login_submit");
+    @Test(dataProvider = "submitData", threadPoolSize = 1)
+    public void submitButtonNegativeTest(String randomStr, String dialect) throws FileNotFoundException {
         SoftAssert softAssert = new SoftAssert();
-        softAssert.assertEquals(str, "შესვლა");
+
+        new LoginPage(driver)
+                .clickLanguageButton()
+                .clickDialect(dialect)
+                .job(it -> it.enterUsername(randomStr))
+                .job(it -> softAssert.assertFalse(it.isSubmitDisabled()))
+                .job(LoginPage::clearUserName)
+                .job(it -> it.enterPassword(randomStr))
+                .job(it -> softAssert.assertFalse(it.isSubmitDisabled()));
+
         softAssert.assertAll();
     }
-
 }
