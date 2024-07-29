@@ -4,7 +4,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.PageFactory;
 import services.Bundle;
 
 import java.io.FileNotFoundException;
@@ -14,7 +13,6 @@ import java.util.Objects;
 public class LanguagePage extends BasePage<LanguagePage> {
     public LanguagePage(WebDriver driver) {
         super(driver);
-        PageFactory.initElements(driver, this);
     }
 
     @FindBy(className = "sub-language")
