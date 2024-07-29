@@ -1,5 +1,6 @@
 package pages;
 
+import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -10,7 +11,7 @@ import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Objects;
 
-public class LanguagePage extends BasePage<LanguagePage> {
+public class LanguagePage extends Page<LanguagePage> {
     public LanguagePage(WebDriver driver) {
         super(driver);
     }
@@ -43,6 +44,7 @@ public class LanguagePage extends BasePage<LanguagePage> {
         return clickDialect("svan");
     }
 
+    @Step
     public LoginPage clickDialect(String dialect) throws FileNotFoundException {
         String str = new Bundle(dialect).getString("geo_dialect");
         findDialectElementByName(str).click();

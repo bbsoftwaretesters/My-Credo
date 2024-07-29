@@ -1,5 +1,6 @@
 package pages;
 
+import io.qameta.allure.Step;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
@@ -7,13 +8,14 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 
-public class LoginPage extends BasePage<LoginPage> {
+public class LoginPage extends Page<LoginPage> {
 
     @FindBy(id = "userName")
     private WebElement usernameField;
 
     @FindBy(id = "newPass")
     private WebElement passwordField;
+
     @FindBy(id = "submitAuth")
     private WebElement loginButton;
 
@@ -26,11 +28,13 @@ public class LoginPage extends BasePage<LoginPage> {
         super(driver);
     }
 
+    @Step("Enter username")
     public void enterUsername(@NonNull String username) {
         waitFor(usernameField, 5);
         usernameField.sendKeys(username);
     }
 
+    @Step("clear User Name")
     public void clearUserName() {
         waitFor(usernameField, 5);
         Actions actions = new Actions(driver);
@@ -43,6 +47,7 @@ public class LoginPage extends BasePage<LoginPage> {
         return usernameField.getText();
     }
 
+    @Step("Enter password")
     public void enterPassword(@NonNull String password) {
         waitFor(passwordField, 5);
         passwordField.sendKeys(password);
@@ -53,6 +58,7 @@ public class LoginPage extends BasePage<LoginPage> {
         return warningMessage.getText();
     }
 
+    @Step("Click Language Button")
     public LanguagePage clickLanguageButton() {
         waitFor(languageSwitcherBtn, 3);
         languageSwitcherBtn.click();
@@ -66,6 +72,7 @@ public class LoginPage extends BasePage<LoginPage> {
         return clickLogin();
     }
 
+    @Step("Click Login")
     public HomePage clickLogin() {
         loginButton.click();
         return new HomePage(driver);
@@ -75,7 +82,8 @@ public class LoginPage extends BasePage<LoginPage> {
         return loginButton.isEnabled();
     }
 
-    public <T extends BasePage<T>> T clickLogin(Class<T> klass) {
+    @Step("Click Login with return a page")
+    public <T extends Page<T>> T clickLogin(Class<T> klass) {
         loginButton.click();
         try {
             return klass.getDeclaredConstructor(WebDriver.class).newInstance(driver);
