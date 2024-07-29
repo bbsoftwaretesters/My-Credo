@@ -18,6 +18,8 @@ public class LoginPage extends BasePage<LoginPage> {
 
     @FindBy(id = "growlText")
     private WebElement warningMessage;
+    @FindBy(id = "languageSwitcherBtn")
+    private WebElement languageSwitcherBtn;
 
     public LoginPage(WebDriver driver) {
         super(driver);
@@ -42,6 +44,13 @@ public class LoginPage extends BasePage<LoginPage> {
     public String getWarningMessage() {
         waitFor(warningMessage, 3);
         return warningMessage.getText();
+    }
+
+    public LanguagePage clickLanguageButton() {
+        waitFor(languageSwitcherBtn, 3);
+        languageSwitcherBtn.click();
+        return loadPage(LanguagePage.class);
+
     }
 
     public HomePage login(String username, String password) {
