@@ -10,13 +10,19 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import org.testng.asserts.SoftAssert;
 import pages.LoginPage;
+import services.Bundle;
 import utils.StringUtils;
 
+import java.io.FileNotFoundException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 public class MyCredoTest {
 
     private WebDriver driver;
+
+    final List<String> dialects = Arrays.asList("ka", "meg", "svan");
 
     @BeforeClass
     public void setUp() {
@@ -26,38 +32,36 @@ public class MyCredoTest {
 
     @DataProvider(name = "loginData")
     public Object[][] createLoginData() {
-        Object[][] data = new Object[10][2]; // Array to hold the test data
+        int count = dialects.size();
+        Object[][] data = new Object[count][count]; // Array to hold the test data
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < count; i++) {
             int randomInt = new Random().nextInt((10 - 1) + 1) + 1;
             String randomStr = RandomStringUtils.random(randomInt, StringUtils.enChars);
             data[i][0] = randomStr;
             data[i][1] = randomStr;
+            data[i][2] = dialects.get(i);
         }
 
         return data;
     }
 
-    @Test(dataProvider = "loginData", threadPoolSize = 5)
-    public void loginNegativeTest(String username, String password) {
+    @Test(dataProvider = "loginData", threadPoolSize = 1)
+    public void loginNegativeTest(String username, String password, String dialect) throws FileNotFoundException {
         SoftAssert softAssert = new SoftAssert();
 
         // Initialize WebDriver inside the test method
         driver.get("https://mycredo.ge/landing/main/auth");
-        System.out.println("Generated password: " + password);
 
         new LoginPage(driver)
-                .job(l -> {
-                    l.enterUsername(username);
-                    System.out.println("entering Username: " + username);
-                    System.out.println("entered Username: " + l.getUsername());
-                    l.enterPassword(password);
+                .clickLanguageButton()
+                .clickDialect(dialect)
+                .job(it -> {
+                    it.enterUsername(username);
+                    it.enterPassword(password);
                 })
                 .clickLogin(LoginPage.class)
-                .job(l -> {
-                    String warningMessage = l.getWarningMessage();
-                    softAssert.assertEquals(warningMessage, "მონაცემები არასწორია", warningMessage + " warning message is not found");
-                });
+                .job(it -> checkWarningMessage(it, dialect, softAssert));
 
         softAssert.assertAll();
     }
@@ -66,6 +70,24 @@ public class MyCredoTest {
     public void tearDown() {
         if (driver != null) {
             driver.quit();
+        }
+    }
+
+    @Test
+    public void test1() throws FileNotFoundException {
+        String str = new Bundle("meg").getString("login_submit");
+        SoftAssert softAssert = new SoftAssert();
+        softAssert.assertEquals(str, "შესვლა");
+        softAssert.assertAll();
+    }
+
+    private static void checkWarningMessage(LoginPage l, String dialect, SoftAssert softAssert) {
+        String warningMessage = l.getWarningMessage();
+        try {
+            String str = new Bundle(dialect).getString("warning_message");
+            softAssert.assertEquals(warningMessage, str, warningMessage + " warning message is not found");
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 
